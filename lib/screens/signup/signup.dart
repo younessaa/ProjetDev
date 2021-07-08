@@ -1,11 +1,12 @@
 import 'package:arijephyto/components/classElement.dart';
 import 'package:arijephyto/components/logicFunctions.dart';
 import 'package:arijephyto/constants.dart';
-import 'package:arijephyto/models/appBar.dart';
 import 'package:arijephyto/models/bottomNavBar.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
 import 'package:arijephyto/services/firebase_auth_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../nav-draw.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -49,12 +50,26 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return SafeArea(
         child: Scaffold(
       drawer: NavDrawer(),
-      appBar: appBarMeth(height, width, "Créer un compte"),
+      appBar: AppBar(
+              leading: Builder(builder : (context) => GestureDetector(
+                    child:  Center(child:  FaIcon(FontAwesomeIcons.alignLeft)
+                    ),
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  )
+                  ),
+                  automaticallyImplyLeading: true,
+                        title: Center(
+                          child: Text(
+                          'Cree Compte',
+                          style: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold, color: kTextColorTitle, fontSize: kTextSize)),
+                          ),
+                        ),
+            ),
       body: Center(
         child: Form(
           key: _formKey,

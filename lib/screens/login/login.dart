@@ -1,10 +1,11 @@
 import 'package:arijephyto/constants.dart';
-import 'package:arijephyto/models/appBar.dart';
 import 'package:arijephyto/models/bottomNavBar.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
 import 'package:arijephyto/services/firebase_auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../nav-draw.dart';
 
 class Login extends StatefulWidget {
@@ -24,7 +25,23 @@ class _LoginState extends State<Login> {
     return SafeArea(
         child: Scaffold(
       drawer: NavDrawer(),
-      appBar: appBarMeth(height, width, "Log in"),
+      appBar: AppBar(
+              leading: Builder(builder : (context) => GestureDetector(
+                    child:  Center(child:  FaIcon(FontAwesomeIcons.alignLeft)
+                    ),
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  )
+                  ),
+                  automaticallyImplyLeading: true,
+                        title: Center(
+                          child: Text(
+                          "S'identifier",
+                          style: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold, color: kTextColorTitle, fontSize: kTextSize)),
+                          ),
+                        ),
+            ),
       bottomNavigationBar: BottomNavyBarMeth(-1),
       body: Center(
         child: Container(

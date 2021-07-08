@@ -49,32 +49,40 @@ Widget build(BuildContext context) {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Center(
-                          child: Container(
-                            width: width * 0.35,
-                            child: Text(
-                              widget.produit.titre,
-                              style: GoogleFonts.roboto(
-                                  textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold, 
-                                    color: kTextColorTitle, 
-                                    fontSize: kTextSizeTitle
-                                )
-                                ),
+                        Container(
+                          width: width * 0.4,
+                          child: Center(
+                            child: Container(
+                              width: width * 0.35,
+                              child: Text(
+                                widget.produit.titre,
+                                style: GoogleFonts.roboto(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold, 
+                                      color: kTextColorTitle, 
+                                      fontSize: kTextSizeTitle
+                                  )
+                                  ),
+                              ),
                             ),
                           ),
                         ),
                         SizedBox(height: 20,),
-                        Text(
-                        widget.produit.prix.toString()+'0 Dh',
-                        style: GoogleFonts.roboto(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.normal, 
-                              color: kTextColorTitle, 
-                              fontSize: kTextSize
-                          )
-                          ),
+                        Container(
+                          width: width * 0.2,
+                          child: Center(
+                            child: Text(
+                            widget.produit.prix.toString()+'0 Dh',
+                            style: GoogleFonts.roboto(
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, 
+                                  color: kTextColorTitle, 
+                                  fontSize: kTextSize
+                              )
+                              ),
                       ),
+                          ),
+                        ),
                         
                       ],
                     ),
@@ -84,23 +92,29 @@ Widget build(BuildContext context) {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Center(
-                        child: Text(
-                          'Quantite de Stock \n\t' + widget.produit.qntStock.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, 
-                              color: kTextColorTitle, 
-                              fontSize: 16
+                      Container(
+                        width: width * 0.2,
+                        child: Center(
+                          child: Text(
+                            'Quantite de Stock \n\t' + widget.produit.qntStock.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, 
+                                color: kTextColorTitle, 
+                                fontSize: 16
+                            ),
                           ),
                         ),
                       ),
-                      Center(
-                        child: Text(
-                          'Categorie \n\t' + widget.produit.categorie,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, 
-                              color: kTextColorTitle, 
-                              fontSize: 16
+                      Container(
+                        width: width * 0.4,
+                        child: Center(
+                          child: Text(
+                            'Categorie \n\t' + widget.produit.categorie,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, 
+                                color: kTextColorTitle, 
+                                fontSize: 16
+                            ),
                           ),
                         ),
                       ),
