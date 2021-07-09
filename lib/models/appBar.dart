@@ -1,3 +1,5 @@
+import 'package:arijephyto/components/dataSearch.dart';
+import 'package:arijephyto/components/produit_model.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -66,7 +68,7 @@ AppBar appBar(double height, double width) {
   }
 
 
-AppBar appBarMeth(double height, double width, String title) {
+AppBar appBarMeth(double height, double width, String title, {List<ProduitModel> list}) {
     return AppBar(
                   leading: Builder(builder : (context) => GestureDetector(
                     child:  Center(child:  FaIcon(FontAwesomeIcons.alignLeft)
@@ -88,13 +90,16 @@ AppBar appBarMeth(double height, double width, String title) {
                     
                     Padding(
                       padding: EdgeInsets.only(right: height * 0.02),
-                      child: GestureDetector(
-                        onTap: () {},
+                      child: Builder(builder : (context) => GestureDetector(
+                        onTap: () {
+                          showSearch(context: context, delegate: DataSearch(list));
+                        },
                         child: Icon(
                                 Icons.search,
                                 size: kIconSize,
                                 color: kIconColorU,
                             ),
+                      )
                       )
                     ),
                   ],

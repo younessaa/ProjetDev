@@ -23,7 +23,7 @@ class _BoutiqueState extends State<Boutique> {
     return SafeArea(
           child: Scaffold(
             drawer: NavDrawer(),
-            appBar: appBarMeth(height, width, 'Boutique'),
+            appBar: appBarMeth(height, width, 'Boutique', list: produitsNotifier.produits),
 
             body: new ListView.builder(
               itemCount: produitsNotifier.produits.length,
@@ -36,4 +36,5 @@ class _BoutiqueState extends State<Boutique> {
     ,
   );
   }
+  
 }
