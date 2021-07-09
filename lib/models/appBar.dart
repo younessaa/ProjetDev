@@ -52,7 +52,7 @@ AppBar appBar(double height, double width) {
                       padding: EdgeInsets.only(right: height * 0.02),
                       child: Builder(builder : (context) => GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, MonCompte.person.getEmail == null ? '/signup' : '/moncompte');
+                          Navigator.pushNamed(context, !MonCompte.isConnected ? '/signup' : '/moncompte');
                         },
                         child: Icon(
                           Icons.person,

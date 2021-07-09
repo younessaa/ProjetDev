@@ -1,6 +1,9 @@
+import 'package:arijephyto/admin/notifier/commandes_notifier.dart';
 import 'package:arijephyto/admin/notifier/produits_notifier.dart';
+import 'package:arijephyto/admin/notifier/user_notifier.dart';
 import 'package:arijephyto/admin/screens/commandes.dart';
 import 'package:arijephyto/admin/screens/produitsAdmin.dart';
+import 'package:arijephyto/components/idClass.dart';
 import 'package:arijephyto/screens/blogs/blogScreen.dart';
 import 'package:arijephyto/screens/boutique/boutique.dart';
 import 'package:arijephyto/screens/boutique/produit.dart';
@@ -44,6 +47,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProduitsNotifier()),
+        ChangeNotifierProvider(create: (context) => UsersNotifier()),
+        ChangeNotifierProvider(create: (context) => IdNotifier()),
+        ChangeNotifierProvider(create: (context) => CommandesNotifier()),
       ],
       child: MaterialApp(
         theme: lightThemeData(context),

@@ -1,9 +1,15 @@
+import 'package:arijephyto/admin/notifier/commandes_notifier.dart';
+import 'package:arijephyto/admin/notifier/user_notifier.dart';
+import 'package:arijephyto/admin/services/commandes_service.dart';
+import 'package:arijephyto/admin/services/user_service.dart';
+import 'package:arijephyto/components/idClass.dart';
 import 'package:arijephyto/models/infosForm.dart';
 import 'package:arijephyto/screens/panier/panier.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../constants.dart';
 
 
@@ -15,8 +21,31 @@ class PasserCommande extends StatefulWidget {
 class _PasserCommandeState extends State<PasserCommande> {
 
   bool cmi = true, valuefirst = false;
+  String  nomsNombrProduits = ' ';
+
+  String nomsProduits(){
+    for (var item in Panier.listProduitsPanier) {
+      nomsNombrProduits += item.titre + ' /' + item.nbrDemande.toString() + ' | ';
+    }
+    return nomsNombrProduits;
+  }
+
+  @override
+  void initState() {
+    nomsNombrProduits = nomsProduits();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    UsersNotifier userNotifier = Provider.of<UsersNotifier>(context);
+    IdNotifier idNotifier = Provider.of<IdNotifier>(context);
+    getUser(userNotifier, idNotifier.currentId);
+      
+    CommandesNotifier commandesNotifier = Provider.of<CommandesNotifier>(context);
+    double prix = Panier.somme;
+
+    double width = MediaQuery.of(context).size.width;
     return SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -53,12 +82,15 @@ class _PasserCommandeState extends State<PasserCommande> {
                                       });  
                                     },  
                           ),
-                          Text(
-                            'Expédier à une adresse différente ?',
-                            style: TextStyle(
-                            color: Colors.black,
-                            fontSize: kTextSize,
-                            fontWeight: FontWeight.bold
+                          Container(
+                            width : width * 0.7,
+                            child: Text(
+                              'Expédier à une adresse différente ?',
+                              style: TextStyle(
+                              color: Colors.black,
+                              fontSize: kTextSize,
+                              fontWeight: FontWeight.bold
+                              ),
                             ),
                           )
                         ],
@@ -86,11 +118,12 @@ class _PasserCommandeState extends State<PasserCommande> {
                                   ),
                                 ),
                                 SizedBox(height: 10,),
-                                textCommande('Prénom : ', ' ' ), //MonCompte.person.getPrenom),
-                                textCommande('Nom : ', ' '), //MonCompte.person.getNom),
-                                textCommande('Adresse : ', ' '), //MonCompte.person.getAdresse),
-                                textCommande('Email : ' , ' '),//MonCompte.person.getEmail),
-                                textCommande('Telephone : ' , ' ')//MonCompte.person.getTele),
+                                textCommande('Prénom : ' + userNotifier.currentUser.getPrenom ), 
+                                textCommande('Nom : ' + userNotifier.currentUser.getNom), 
+                                textCommande('Adresse : ' + userNotifier.currentUser.getAdresse),
+                                textCommande('Ville : ' + userNotifier.currentUser.getVille),
+                                textCommande('Email : ' + userNotifier.currentUser.getEmail),
+                                textCommande('Telephone : ' + userNotifier.currentUser.getTele)
 
                               ],
                             ),
@@ -141,9 +174,9 @@ class _PasserCommandeState extends State<PasserCommande> {
                               style: GoogleFonts.reemKufi(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFFF0677C), fontSize: kTextSizeTitle)),
                           ),
                           SizedBox(height : 10),
-                          textCommande('Identifiant :','102'),
-                          textCommande('Montant : ' , Panier.somme.toString() + '0 DH'),
-                          textCommande('Nom du marchande :', 'ARIJPHYTO'),
+                          textCommande('Identifiant :' + '102'),
+                          textCommande('Montant : ' + Panier.somme.toString() + '0 DH'),
+                          textCommande('Nom du marchande :' + 'ARIJPHYTO'),
                           SizedBox(height : 10), 
                           
                         ]
@@ -181,10 +214,14 @@ class _PasserCommandeState extends State<PasserCommande> {
                           backgroundColor : Color(0xFF6C8DAB),
                           enableFeedback: false,
                         ),
-                        onPressed: (){
+                        onPressed: () async {
                           if(cmi == true)
                             Navigator.pushNamed(context, '/cmiMethode');
                           else{
+                            try{
+                              await addCommande(commandesNotifier, userNotifier.currentUser.getPrenom + userNotifier.currentUser.getNom,
+                             userNotifier.currentUser.getAdresse + '|' + userNotifier.currentUser.getVille + '|' + userNotifier.currentUser.getRegion,
+                              userNotifier.currentUser.getEmail, userNotifier.currentUser.getTele, prix, nomsNombrProduits);
                             showDialog<String>(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
@@ -197,6 +234,21 @@ class _PasserCommandeState extends State<PasserCommande> {
                                 ],
                               ),
                             );
+                            }catch(e){
+                              showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Erreur de System !!!'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () => Navigator.pushNamed(context, '/home'),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            }
+                            
                           }
                         },
                         child: Text(
@@ -219,11 +271,13 @@ class _PasserCommandeState extends State<PasserCommande> {
   );
   }
 
-  Text textCommande(String string, String string1) {
-    return Text(
-                            string + ' ' + (string1 == null ? ' ' : string1),
-                            style: GoogleFonts.reemKufi(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: kTextSizeTitle)),
-                        );
+  Container textCommande(String string) {
+    return Container(
+      child: Text(
+                              string,
+                              style: GoogleFonts.reemKufi(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: kTextSizeTitle)),
+                          ),
+    );
   }
 
   GestureDetector methodePaiement(String string, bool b) {

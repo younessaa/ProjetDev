@@ -1,12 +1,16 @@
+import 'package:arijephyto/admin/notifier/user_notifier.dart';
+import 'package:arijephyto/admin/services/user_service.dart';
 import 'package:arijephyto/components/classElement.dart';
+import 'package:arijephyto/components/idClass.dart';
 import 'package:arijephyto/models/bottomNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../constants.dart';
 
 class MonCompte extends StatefulWidget {
-  static Person person = new Person();
+  static Person person;
   static bool isConnected = false;
   @override
   _MonCompteState createState() => _MonCompteState();
@@ -15,6 +19,9 @@ class MonCompte extends StatefulWidget {
 class _MonCompteState extends State<MonCompte> {
   @override
   Widget build(BuildContext context) {
+    UsersNotifier userNotifier = Provider.of<UsersNotifier>(context);
+    IdNotifier idNotifier = Provider.of<IdNotifier>(context);
+    getUser(userNotifier, idNotifier.currentId);
     double width = MediaQuery.of(context).size.width;
     return SafeArea(
         child: Scaffold(
@@ -52,11 +59,11 @@ class _MonCompteState extends State<MonCompte> {
                       ),
                     ),
                   ),
-                  textRow('Prénom :', MonCompte.person.getPrenom, width),
-                  textRow('Nom :', MonCompte.person.getNom, width),
-                  textRow('Adresse :', MonCompte.person.getAdresse, width),
-                  textRow('Email :', MonCompte.person.getEmail, width),
-                  textRow('Telephone :', MonCompte.person.getTele, width),
+                  textRow('Prénom :', userNotifier.currentUser.getPrenom, width),
+                  textRow('Nom :', userNotifier.currentUser.getNom, width),
+                  textRow('Adresse :', userNotifier.currentUser.getAdresse, width),
+                  textRow('Email :', userNotifier.currentUser.getEmail, width),
+                  textRow('Telephone :', userNotifier.currentUser.getTele, width),
 
                 ],
               ),
@@ -118,7 +125,7 @@ class _MonCompteState extends State<MonCompte> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(14.0),
-                      child: Text(name,
+                      child: Text(name??'jj',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold
@@ -130,7 +137,7 @@ class _MonCompteState extends State<MonCompte> {
                       width: width * 0.6,
                       child: Padding(
                         padding: const EdgeInsets.all(14.0),
-                        child: Text(value,
+                        child: Text(value??'null',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

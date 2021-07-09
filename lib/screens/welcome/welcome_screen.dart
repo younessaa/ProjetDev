@@ -1,4 +1,3 @@
-import 'package:arijephyto/components/classElement.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -70,7 +69,7 @@ class _WelcomeState extends State<Welcome> {
                                 ),
                           onPressed: () {
                             setState(() {
-                              MonCompte.person = new Person();
+                              MonCompte.isConnected = false;
                             });
                             Navigator.popAndPushNamed(context, '/home');
                           },

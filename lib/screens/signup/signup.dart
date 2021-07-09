@@ -1,4 +1,6 @@
-import 'package:arijephyto/components/classElement.dart';
+import 'package:arijephyto/admin/notifier/user_notifier.dart';
+import 'package:arijephyto/admin/services/user_service.dart';
+import 'package:arijephyto/components/idClass.dart';
 import 'package:arijephyto/components/logicFunctions.dart';
 import 'package:arijephyto/constants.dart';
 import 'package:arijephyto/models/bottomNavBar.dart';
@@ -7,6 +9,7 @@ import 'package:arijephyto/services/firebase_auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../nav-draw.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -28,28 +31,17 @@ class _SignupState extends State<Signup> {
   TextEditingController motDePass = TextEditingController();
   TextEditingController motDePass2 = TextEditingController();
   double heightF = 5;
-
-  //final databaseReference = FirebaseDatabase.instance.reference().child("Users");
-
-  Person _person = Person();
   final _formKey = GlobalKey<FormState>();
- 
 
-  // void _addClients(String id){
-  //   databaseReference.child(id).set({
-  //     'prenom' : _person.getPrenom,
-  //     'nom' : _person.getNom,
-  //     'adresse' : _person.getAdresse,
-  //     'ville' : _person.getVille,
-  //     'region' : _person.getRegion,
-  //     'code postale' : _person.getCodePos,
-  //     'pays' : _person.getPays,
-  //     'telephone' : _person.getTele
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    UsersNotifier userNotifier = Provider.of<UsersNotifier>(context);
+    IdNotifier idNotifier = Provider.of<IdNotifier>(context);
     return SafeArea(
         child: Scaffold(
       drawer: NavDrawer(),
@@ -139,35 +131,32 @@ class _SignupState extends State<Signup> {
                     minWidth: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () async {
-                      _person.setPrenom = prenom.text;
-                      _person.setNom = nom.text;
-                      _person.setAdresse = adresse.text;
-                      _person.setVille = ville.text;
-                      _person.setRegion = region.text;
-                      _person.setCodePos = codePostale.text;
-                      _person.setPays = pays.text;
-                      _person.setTele = tele.text;
-                      _person.setEmail = email.text;
-                      _person.setMotPass = motDePass.text;
-                      if(infosValide(_person)){
-                        if(_person.getMotPass == motDePass2.text) {
+                      if(infosValide(nom, prenom, adresse, ville, pays, region, tele, codePostale, email, motDePass)){
+                        if(motDePass.text == motDePass2.text) {
                           try {
                             UserCredential userCredential =
                                 await FirebaseHelper.createAccount(
-                                    _person.getEmail, _person.getMotPass);
+                                    email.text, motDePass.text);
                             if (userCredential.user != null) {
-                              //_addClients(userCredential.user.uid);
+                              await addUser(userNotifier, userCredential.user.uid, prenom.text, nom.text, adresse.text, ville.text, region.text, codePostale.text, pays.text, tele.text, email.text);
                               print("Succed");
+                              setState(() {
+                              MonCompte.isConnected = true;
+                              });
+                              idNotifier.setId = userCredential.user.uid;
+                              Navigator.popAndPushNamed(context, '/moncompte');
+                            }else{
+                              setState(() {
+                              MonCompte.isConnected = false;
+                              });
                             }
                           } catch (e) {
+                            setState(() {
+                              MonCompte.isConnected = false;
+                              });
                             print("Failed !!!!");
                           }
-                          //_savClient(_person.getEmail, _person.getMotPass);
-                          setState(() {
-                          MonCompte.person = _person;
-                          MonCompte.isConnected = true;
-                          });
-                          Navigator.popAndPushNamed(context, '/moncompte');
+                          
                         }
                         else{
                           showDialog<String>(

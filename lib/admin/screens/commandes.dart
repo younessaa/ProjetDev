@@ -1,6 +1,10 @@
 import 'package:arijephyto/admin/models/AdminBottomNavBar.dart';
+import 'package:arijephyto/admin/models/commandeCard.dart';
+import 'package:arijephyto/admin/notifier/commandes_notifier.dart';
+import 'package:arijephyto/admin/services/commandes_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 
@@ -13,6 +17,8 @@ class Commandes extends StatefulWidget{
 class _CommandesState extends State<Commandes> {
   @override
   Widget build(BuildContext context) {
+    CommandesNotifier commandesNotifier = Provider.of<CommandesNotifier>(context);
+    getCommandes(commandesNotifier);
     return SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -32,10 +38,25 @@ class _CommandesState extends State<Commandes> {
                         ),
             ),
 
-            body: Center(
-              child : Text(
-                'Pas de commandes'
-              )
+            body: ListView.builder(
+              itemCount: commandesNotifier.commandes.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    commandesNotifier.currentCommande = commandesNotifier.commandes[index];
+                    
+                  },
+                  child: ListTile(
+                    title: CommandeCardAdm(commandesNotifier.commandes[index]),
+                    trailing: GestureDetector(
+                      onTap: () async {
+                        await deleteCommande(commandesNotifier, commandesNotifier.commandes[index]);
+                      },
+                      child: Icon(Icons.delete, color: Colors.redAccent,),
+                    ),
+                  ),
+                );
+              },
             ),
             bottomNavigationBar: BottomNavBarAdm(1),
     )

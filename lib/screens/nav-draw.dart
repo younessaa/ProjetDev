@@ -5,7 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants.dart';
 
 
-class NavDrawer extends StatelessWidget {
+class NavDrawer extends StatefulWidget {
+  @override
+  _NavDrawerState createState() => _NavDrawerState();
+}
+
+class _NavDrawerState extends State<NavDrawer> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -23,7 +28,7 @@ class NavDrawer extends StatelessWidget {
                   
                 ),
             ),
-            listTileItem(context, 'Mon compte', width, height, MonCompte.person.getEmail == null ? '/signup' : '/moncompte'),
+            listTileItem(context, 'Mon compte', width, height, !MonCompte.isConnected ? '/signup' : '/moncompte'),
             listTileItem(context, 'Portfolio', width, height, '/portfolio'),
             listTileItem(context, 'PROMO', width, height, '/promo'),
             listTileItem(context, 'Catégories', width, height, '/categories'),
@@ -39,6 +44,11 @@ class NavDrawer extends StatelessWidget {
   GestureDetector listTileItem(BuildContext context, String string,double width, double height, String path) {
     return GestureDetector(
       onTap: () {
+        if(path == '/login'){
+          setState(() {
+            MonCompte.isConnected = false;
+          });
+        }
         Navigator.popAndPushNamed(context, path);
       },
       child: Container(

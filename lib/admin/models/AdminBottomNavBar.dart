@@ -1,4 +1,3 @@
-import 'package:arijephyto/components/classElement.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,7 @@ class _BottomNavBarAdmState extends State<BottomNavBarAdm> {
                 onTap: () {
                   if(path == '/boutique'){
                     MonCompte.isConnected = false;
-                    MonCompte.person = Person();
+                    MonCompte.person = null;
                   }
                   if(index != widget.currentIndex)
                     Navigator.popAndPushNamed(context, path);

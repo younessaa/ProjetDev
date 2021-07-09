@@ -1,6 +1,6 @@
 import 'package:arijephyto/components/produit_model.dart';
+import 'package:flutter/material.dart';
 
-import 'classElement.dart';
 
 ProduitModel getProduit(List<ProduitModel> list, String id){
   for (var i = 0; i < list.length; i++) {
@@ -19,26 +19,31 @@ double calculeSommePanier(List<ProduitModel> list){
   return somme;
 }
 
-bool infosValide(Person person) {
-  if(person.getAdresse == '')
+bool infosValide(TextEditingController nom,
+  TextEditingController prenom,TextEditingController adresse,
+  TextEditingController ville,TextEditingController pays,
+  TextEditingController region, TextEditingController tele,
+  TextEditingController codePostale, TextEditingController email,
+  TextEditingController motDePass) {
+  if(prenom.text == null)
     return false;
-  if(person.getCodePos == '')
+  if(nom.text == null)
     return false;
-  if(person.getEmail == '')
+  if(adresse.text == null)
     return false;
-  if(person.getNom == '')
+  if(ville.text == null)
     return false;
-  if(person.getRegion == '')
+  if(pays.text == null)
     return false;
-  if(person.getPays == '')
+  if(region.text == null)
     return false;
-  if(person.getTele == '')
+  if(tele.text == null)
     return false;
-  if(person.getPrenom == '')
+  if(codePostale.text == null)
     return false;
-  if(person.getMotPass == '')
+  if(email.text == null)
     return false;
-  if(person.getVille == '')
+  if(motDePass.text == null)
     return false;
   return true;
 }

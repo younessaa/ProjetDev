@@ -1,3 +1,4 @@
+import 'package:arijephyto/components/idClass.dart';
 import 'package:arijephyto/constants.dart';
 import 'package:arijephyto/models/bottomNavBar.dart';
 import 'package:arijephyto/screens/signup/compteInfo.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../nav-draw.dart';
 
 class Login extends StatefulWidget {
@@ -18,10 +20,16 @@ class _LoginState extends State<Login> {
   TextEditingController motDePass = TextEditingController();
   double heightF = 5;
   UserCredential userCredential;
+
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    IdNotifier idNotifier = Provider.of<IdNotifier>(context);
     return SafeArea(
         child: Scaffold(
       drawer: NavDrawer(),
@@ -80,7 +88,7 @@ class _LoginState extends State<Login> {
                       minWidth: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       onPressed: () async {
-                        if(email.text == null || motDePass.text == null){
+                        if(email.text == '' || motDePass.text == ''){
                           showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -99,6 +107,7 @@ class _LoginState extends State<Login> {
                             userCredential = await FirebaseHelper.signInWithEmailAndPassword(email.text, motDePass.text);
                             if(userCredential != null){
                               MonCompte.isConnected = true;
+                              idNotifier.setId = userCredential.user.uid;
                               if(userCredential.user.email == "y1o2u3n4@gmail.com" && userCredential.user.uid == "VdIBMVYLv8RI2mK6iW2MXi8mEkv1"){
                                 Navigator.popAndPushNamed(context, '/produitsAdmin');
                               }
@@ -107,6 +116,7 @@ class _LoginState extends State<Login> {
                               } 
                             }
                             else{
+                              MonCompte.isConnected = false;
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -121,6 +131,12 @@ class _LoginState extends State<Login> {
                           );
                             }
                           } catch(e){
+                            ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                            content: Text("User not found  !!!"),
+                            duration: new Duration(
+                              seconds: 5,
+                            ),
+                          ));
                             print('User not found');
                           }
                           

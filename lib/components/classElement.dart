@@ -1,4 +1,6 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Produit {
   static int idClasse = 0;
   String prodTitle;
@@ -28,16 +30,50 @@ class Blog {
 }
 
 class Person {
-  String _prenom;
-  String _nom;
-  String _adresse;
-  String _ville;
-  String _region;
-  String _codePostale;
-  String _pays;
-  String _telephone;
-  String _email;
+  String docId;
+  String _idAuth;
+  String _prenom ,_nom;
+  String _adresse ,_ville, _region,_codePostale, _pays;
+  String _telephone, _email;
   String _motDePasse;
+
+  Map<String, dynamic> toMap() {
+    return {
+      '_idAuth' : this._idAuth,
+      '_prenom' : this._prenom,
+      '_nom' : this._nom,
+      '_adresse' : this._adresse,
+      '_ville' : this._ville,
+      '_region' : this._region,
+      '_codePostale' : this._codePostale,
+      '_pays' : this._pays,
+      '_telephone' : this._telephone,
+      '_email' : this._email,
+
+    };
+  }
+
+  Person(String docId, Map<String, dynamic> data) {
+    this.docId = docId;
+    this._idAuth = data['_idAuth'];
+    this._prenom = data['_prenom'];
+    this._nom = data['_nom'];
+    this._adresse = data['_adresse'];
+    this._ville = data['_ville'];
+    this._region = data['_region'];
+    this._codePostale = data['_codePostale'];
+    this._pays = data['_pays'];
+    this._telephone = data['_telephone'];
+    this._email = data['_email'];
+  }
+
+  
+
+  Future<DocumentReference> save() async {
+    DocumentReference doc =
+        await FirebaseFirestore.instance.collection('users').add(this.toMap());
+    return doc;
+  }
 
   String get getPrenom {
     return _prenom;

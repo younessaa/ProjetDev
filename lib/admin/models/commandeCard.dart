@@ -1,16 +1,16 @@
-import 'package:arijephyto/components/classElement.dart';
+import 'package:arijephyto/components/commande_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
-class ProduitCardAdm extends StatefulWidget {
-  final Commande commande;
-  ProduitCardAdm(this.commande);
+class CommandeCardAdm extends StatefulWidget {
+  final CommandeModel commande;
+  CommandeCardAdm(this.commande);
   @override 
-  _ProduitCardAdmState createState() => _ProduitCardAdmState();
+  _CommandeCardAdmState createState() => _CommandeCardAdmState();
 }
 
-class _ProduitCardAdmState extends State<ProduitCardAdm>{
+class _CommandeCardAdmState extends State<CommandeCardAdm>{
 @override
 Widget build(BuildContext context) {
   double width = MediaQuery.of(context).size.width;
@@ -30,34 +30,12 @@ Widget build(BuildContext context) {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  rowText(width, 'Nom : ', widget.commande.nomC),
-                  rowText(width, 'Prenom : ', widget.commande.prenomC),
-                  rowText(width, 'Adresse : ', widget.commande.adresseC),
-                  rowText(width, 'Email : ', widget.commande.emailC),
-                  rowText(width, 'Tele : ', widget.commande.teleC),
-                  rowText(width, 'ville : ', widget.commande.villeC),
-                  rowText(width, 'region : ', widget.commande.regionC),
-                  rowText(width, 'Pays : ', widget.commande.paysC),
-                  rowText(width, 'Code Postale : ', widget.commande.codePostaleC),
-                  rowText(width, 'date : ', widget.commande.date.toString()),
-                  rowText(width, 'Noms des Produits : ', widget.commande.nomsProduits),
-                  rowText(width, 'Prix : ', widget.commande.nomC),
-                  Container(
-                    width: width * 0.6,
-                    child: MaterialButton(
-                          child: Center(
-                            child: Text('Supprimer',
-                                    style: GoogleFonts.ruda(textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
-                                  ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              //listProduitsClass.remove(widget.produit);
-                            });
-                          },
-                          color: Colors.redAccent,
-                          ),
-                  )
+                  rowText(width, 'Nom et prenom : '+ widget.commande.fullName),
+                  rowText(width, 'Adresse : '+ widget.commande.adresse),
+                  rowText(width, 'Email : '+ widget.commande.email),
+                  rowText(width, 'Tele : '+ widget.commande.tele),
+                  rowText(width, 'noms Produits : '+ widget.commande.produitsId),
+                  rowText(width, 'prix : '+ widget.commande.prix.toString()),
                 ],
               ),
             ),
@@ -68,23 +46,18 @@ Widget build(BuildContext context) {
   );
  }
 
-Row rowText(double width, String string1, String string2) {
-  return Row(
+Column rowText(double width, String string1) {
+  return Column(
                   children: [
                     Container(
-                      width: width * 0.3,
+                      width: width * 0.6,
                       child: Text(
                         string1,
                         style: GoogleFonts.ruda(textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18)),
                       ),
                     ),
-                    Container(
-                      width: width * 0.6,
-                      child: Text(
-                        string2,
-                        style: GoogleFonts.ruda(textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18)),
-                      ),
-                    ),
+                    SizedBox(height: 5,),
+                    
                   ],
                 );
 }
