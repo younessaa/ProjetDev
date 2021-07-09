@@ -1,12 +1,21 @@
+import 'package:arijephyto/admin/notifier/comments_notifier.dart';
+import 'package:arijephyto/admin/notifier/user_notifier.dart';
+import 'package:arijephyto/admin/services/comments_services.dart';
+import 'package:arijephyto/admin/services/user_service.dart';
+import 'package:arijephyto/components/comment_model.dart';
+import 'package:arijephyto/components/idClass.dart';
 import 'package:arijephyto/components/logicFunctions.dart';
 import 'package:arijephyto/components/produit_model.dart';
+import 'package:arijephyto/models/cardComment.dart';
 import 'package:arijephyto/models/listsOffresPorts.dart';
 import 'package:arijephyto/screens/panier/panier.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 
 
 class ProduitItem extends StatefulWidget {
@@ -17,6 +26,17 @@ class ProduitItem extends StatefulWidget {
 class _ProduitItemState extends State<ProduitItem> {
   double _rating;
   double _initialRating = 0.0;
+  TextEditingController comment = TextEditingController();
+
+  Column commentsUsers(List<CommentModel> list){
+    List<CommentCard> commets = [];
+    for (var item in list) {
+      commets.add(CommentCard(item));
+    }
+     return Column(
+         children : commets
+       );
+  }
 
   @override
   void initState() {
@@ -25,9 +45,17 @@ class _ProduitItemState extends State<ProduitItem> {
   }
   @override
   Widget build(BuildContext context) {
+    
     ProduitModel prod = ModalRoute.of(context).settings.arguments as ProduitModel;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
+    UsersNotifier userNotifier = Provider.of<UsersNotifier>(context);
+    IdNotifier idNotifier = Provider.of<IdNotifier>(context);
+    getUser(userNotifier, idNotifier.currentId);
+
+    CommentsNotifier commentsNotifier = Provider.of<CommentsNotifier>(context);
+    getComments(commentsNotifier, prod.docId);
     return SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -46,7 +74,7 @@ class _ProduitItemState extends State<ProduitItem> {
             ),
 
             body: ListView(
-              children: [
+              children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200].withOpacity(0.9),
@@ -57,7 +85,7 @@ class _ProduitItemState extends State<ProduitItem> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           imageTitle(prod, width),
-
+            
                           prixNombre(height, width, prod, Colors.green[100])
                         ],
                       ),
@@ -92,15 +120,19 @@ class _ProduitItemState extends State<ProduitItem> {
                     style: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: 30)),
                   ),
                 ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Text(
-                    'Il n’y pas encore d’avis.\nSoyez le premier à laisser votre avis sur “' + prod.titre+'”',
-                    style: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF444444), fontSize: 18)),
-                  ),
+                Container(
+                  child: commentsNotifier.comments.isEmpty ? null : commentsUsers(commentsNotifier.comments)
                 ),
-
+                Container(
+                  child: commentsNotifier.comments.isEmpty ? Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Text(
+                      'Il n’y pas encore d’avis.\nSoyez le premier à laisser votre avis sur “' + prod.titre+'”',
+                      style: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF444444), fontSize: 18)),
+                    ),
+                  ) : null,
+                ),
+            
                 SizedBox(height: 40.0),
                 Center(
                   child: Text(
@@ -118,6 +150,7 @@ class _ProduitItemState extends State<ProduitItem> {
                   ),
                 ),
                 SizedBox(height: 20.0),
+                
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: RichText(
@@ -135,25 +168,11 @@ class _ProduitItemState extends State<ProduitItem> {
                     ),
                   ),
                 ),
-
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Container(
-                    decoration : BoxDecoration(
-                      color: Colors.grey[250],
-                      border: Border.all(color: Colors.grey)
-                    ),
-                    child: TextFormField(
-                    maxLines: 10,
-                    decoration : const InputDecoration(
-                      border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-
+            
+                inputField('Commenter ici ', comment),
+            
                 SizedBox(height: 10.0),
-
+            
                 Padding(
                   padding: EdgeInsets.only(left: width * 0.5, right: 4),
                   child: TextButton(
@@ -161,7 +180,20 @@ class _ProduitItemState extends State<ProduitItem> {
                       backgroundColor : Color(0xFF6C8DAB),
                       enableFeedback: false,
                     ),
-                    onPressed: (){
+                    onPressed: () async {
+                      if(comment.text != null){
+                        try{
+                          await addComment(commentsNotifier,prod.docId, userNotifier.currentUser.getPrenom + " " + userNotifier.currentUser.getNom, DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()), comment.text);
+                          comment.clear();
+                          print('Comment Added Succesful');
+                          setState(() {
+                            
+                          });
+                        }catch(e){
+                          print('Comment not Added !!!');
+                        }
+                      }
+                      
                     },
                     child: Text(
                       'Soumettre',
@@ -172,7 +204,8 @@ class _ProduitItemState extends State<ProduitItem> {
                       ),
                     ) 
                   ),
-                )
+                ),
+                SizedBox(height: 850.0),
               ],
               )
     )
@@ -363,4 +396,17 @@ class _ProduitItemState extends State<ProduitItem> {
           updateOnDrag: true,
         );
   }
+
+  Widget inputField(String hintText, TextEditingController controller,
+      {bool isObscureText = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, right: 8),
+      child: TextField(
+        obscureText: isObscureText,
+        controller: controller,
+        decoration: InputDecoration(hintText: hintText, border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
+      ),
+    );
+  }
+
 }

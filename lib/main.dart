@@ -1,4 +1,5 @@
 import 'package:arijephyto/admin/notifier/commandes_notifier.dart';
+import 'package:arijephyto/admin/notifier/comments_notifier.dart';
 import 'package:arijephyto/admin/notifier/produits_notifier.dart';
 import 'package:arijephyto/admin/notifier/user_notifier.dart';
 import 'package:arijephyto/admin/screens/commandes.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UsersNotifier()),
         ChangeNotifierProvider(create: (context) => IdNotifier()),
         ChangeNotifierProvider(create: (context) => CommandesNotifier()),
+        ChangeNotifierProvider(create: (context) => CommentsNotifier()),
       ],
       child: MaterialApp(
         theme: lightThemeData(context),
